@@ -38,7 +38,8 @@ impl Client {
         max_allowed_redirects: Option<usize>,
         danger_accept_invalid_certs: Option<bool>
     ) -> PyResult<Self> {
-        let mut client = reqwest::Client::builder();
+        let mut client = reqwest::Client::builder()
+            .no_gzip();
         client = client.use_rustls_tls();
         if let Some(ref user_agent) = user_agent {
             client = client.user_agent(user_agent);
