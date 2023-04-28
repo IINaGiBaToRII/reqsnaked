@@ -78,5 +78,5 @@ HTTPStatus.OK
 ## Installlation
 Currently the library is not published to PyPI, so the only way to install it is from GitHub:
 ```bash
-python -m pip install -U https://github.com/deknowny/reqsnaked/archive/main.zip
+python -m pip install -U https://github.com/IINaGiBaToRII/reqsnaked/archive/main.zip
 ```
