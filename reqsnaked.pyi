@@ -57,6 +57,9 @@ class LazyJSON:
     def show(self, *keys: typing.Union[str, int]) -> None:
         pass
 
+    def contains(self, *keys: typing.Union[str, int]) -> bool:
+        pass
+
 
 @dataclasses.dataclass
 class Part:
