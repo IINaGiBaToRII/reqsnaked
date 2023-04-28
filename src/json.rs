@@ -18,6 +18,7 @@ pub enum PySerde {
     Array(Vec<PySerde>),
 }
 
+
 impl ToPyObject for PySerde {
     fn to_object(&self, py: Python<'_>) -> PyObject {
         match self {
@@ -102,6 +103,12 @@ impl LazyJSON {
 
 #[pymethods]
 impl LazyJSON {
+
+    #[args(keys = "*")]
+    pub fn contains(&self, keys: Vec<PyIndex>) -> bool {
+        self.access_at(keys).is_ok()
+    }
+
     #[args(keys = "*")]
     pub fn query(&self, keys: Vec<PyIndex>) -> PyResult<PyObject> {
         let mapping = self.access_at(keys)?;
@@ -118,4 +125,13 @@ impl LazyJSON {
         println!("{}", colored);
         Ok(())
     }
+    
+}
+
+pub fn init_module(py: Python, parent_module: &PyModule, library: &PyModule) -> PyResult<()> {
+    let submod = PyModule::new(py, "json")?;
+    submod.add_class::<LazyJSON>()?;
+    library.add_class::<LazyJSON>()?;
+    parent_module.add_submodule(submod)?;
+    Ok(())
 }

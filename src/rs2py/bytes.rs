@@ -12,11 +12,15 @@ impl Bytes {
     pub fn as_bytes<'rt>(&'rt self, py: Python<'rt>) -> &'rt PyBytes {
         PyBytes::new(py, self.0.as_ref())
     }
-    pub fn decode<'rt>(&'rt self, py: Python<'rt>) -> &'rt PyString {
-        let encoding = detect(self.0.as_ref()).0;
-
+    pub fn decode<'rt>(&'rt self, py: Python<'rt>, encoding: &PyString) -> &'rt PyString {
+        let encoding = encoding.to_str().unwrap();
         let encoding = Encoding::for_label(encoding.as_bytes()).unwrap_or(UTF_8);     
         PyString::new(py, &encoding.decode(self.0.as_ref()).0)
+    }
+    pub fn guess_encoding<'rt>(&'rt self) -> &'rt str {
+        let encoding = detect(self.0.as_ref()).0;
+        let encoding = Encoding::for_label(encoding.as_bytes()).unwrap_or(UTF_8);     
+        encoding.name()
     }
 }
 
