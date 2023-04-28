@@ -17,7 +17,10 @@ class Bytes:
     def as_bytes(self) -> bytes:
         pass
 
-    def decode(self) -> str:
+    def decode(self, encoding: str) -> str:
+        pass
+
+    def guess_encoding(self) -> str:
         pass
 
 
