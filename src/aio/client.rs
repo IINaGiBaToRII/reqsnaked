@@ -36,14 +36,17 @@ impl Client {
         headers: Option<std::collections::HashMap<String, String>>,
         store_cookie: Option<bool>,
         max_allowed_redirects: Option<usize>,
-        danger_accept_invalid_certs: Option<bool>
+        danger_accept_invalid_certs: Option<bool>,
+        proxy: Option<String>, // Add proxy parameter
     ) -> PyResult<Self> {
         let mut client = reqwest::Client::builder()
             .no_gzip();
         client = client.use_rustls_tls();
+        
         if let Some(ref user_agent) = user_agent {
             client = client.user_agent(user_agent);
         }
+
         let mut default_headers_map = reqwest::header::HeaderMap::new();
         if let Some(default_headers) = headers {
             for (key, value) in default_headers {
@@ -55,14 +58,21 @@ impl Client {
             }
             client = client.default_headers(default_headers_map);
         }
+        
         if let Some(store_cookie) = store_cookie {
             client = client.cookie_store(store_cookie);
         }
+        
         if let Some(max_allowed_redirects) = max_allowed_redirects {
             client = client.redirect(reqwest::redirect::Policy::limited(max_allowed_redirects))
         }
+        
         if let Some(danger_accept_invalid_certs) = danger_accept_invalid_certs {
             client = client.danger_accept_invalid_certs(danger_accept_invalid_certs);
+        }
+        
+        if let Some(proxy) = proxy {
+            client = client.proxy(reqwest::Proxy::all(&proxy).map_err(|e| wrap_reqwest_error(e))?);
         }
 
         match client.build() {
@@ -70,7 +80,7 @@ impl Client {
             Ok(client) => Ok(Client { client }),
         }
     }
-
+    
     pub fn send<'rt>(&self, request: &PyCell<Request>, py: Python<'rt>) -> PyResult<&'rt PyAny> {
         let client = self.client.clone();
         let request = request.borrow().build(&client)?;
