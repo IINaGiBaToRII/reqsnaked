@@ -116,8 +116,9 @@ class Client:
     store_cookie: typing.Optional[bool] = False
     max_allowed_redirects: typing.Optional[int] = 10
     danger_accept_invalid_certs: typing.Optional[bool] = False
+    proxy: typing.Optional[str] = None  # Add proxy parameter
 
-    async def send(self, requset) -> Response:
+    async def send(self, request) -> Response:
         pass
 
 
